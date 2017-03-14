@@ -43,11 +43,11 @@ def profile():
         age = request.form['age']
         gender = request.form['gender']
         biography = request.form['biography']
-        file = request.files['file']
-        filename = secure_filename(file.filename)
-        file.save(os.path.join(file_folder, filename))
+        pic = request.files['pic']
+        filename = secure_filename(pic.filename)
+        pic.save(os.path.join(file_folder, filename))
         
-        user = UserProfile(date=time.strftime("%c"), first_name=firstname, last_name=lastname, age=age, gender=gender, biography=biography, file=filename)
+        user = UserProfile(date=time.strftime("%c"), first_name=firstname, last_name=lastname, age=age, gender=gender, biography=biography, pic=filename)
         db.session.add(user)
         db.session.commit()
         flash('Profile has been created!')
@@ -59,7 +59,7 @@ def profile():
 @app.route('/profiles', methods=['GET', 'POST'])
 def profiles():
     users = UserProfile.query.all()
-    if request.method =='POST' and request.headers['Content-Type'] == "application/json":
+    if request.method =='POST':#and request.headers['Content-Type'] == "application/json":
         list = [] 
         for user in users:
             list.append({'userid':user.id})
@@ -70,8 +70,17 @@ def profiles():
 @app.route('/profile/<int:id>')
 def userProfile(id):
     users = UserProfile.query.filter_by(id=id).first()
-    if request.method =='POST' and request.headers['Content-Type'] == "application/json":
-        return jsonify(id=users.id, date=users.date, age=users.age, gender=users.gender, biography=users.biography, file=users.filename)
+    if request.method =='POST': #and request.headers['Content-Type'] == "application/json":
+        jsonuser = {}
+        jsonuser["id"] = users.id
+        jsonuser["date"] = users.date
+        jsonuser["age"] = users.age
+        jsonuser["gender"] = users.gender
+        jsonuser["biography"] = users.biography
+        jsonuser["pic"] = users.pic
+        return jsonify(jsonuser)
+        #list = [{'userid':users.id, 'date':users.date, 'age':users.age, 'gender':users.gender, 'biography':users.biography, 'pic':users.filename}]
+        #return jsonify(users=list)
     else:
         return render_template('userProfile.html', users=users)
 

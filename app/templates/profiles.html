@@ -10,7 +10,7 @@
     <div class="col-md-6">
         <div id = 'info'>
             <!--Image throwing error-->
-            <img src="{{ url_for('static', filename='uploads/' + user.file) }}">
+            <img src="{{ url_for('static', filename='uploads/' + user.pic) }}">
             <h3>{{ user.first_name}} {{ user.last_name }}</h3>
             <p><b>Profie created on:</b> {{ user.date }}</p> <br>
             <p><b>User ID:</b> {{ user.id }}</p>
