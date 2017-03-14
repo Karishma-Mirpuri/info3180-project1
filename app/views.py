@@ -5,8 +5,13 @@ Werkzeug Documentation:  http://werkzeug.pocoo.org/documentation/
 This file creates your application.
 """
 
-from app import app
-from flask import render_template, request, redirect, url_for
+import os
+from app import app, db
+from flask import render_template, request, redirect, url_for, flash, jsonify
+from forms import UserForm
+from werkzeug.utils import secure_filename
+from models import UserProfile
+import smtplib, time
 
 
 ###
@@ -22,8 +27,44 @@ def home():
 @app.route('/about/')
 def about():
     """Render the website's about page."""
-    return render_template('about.html', name="Mary Jane")
-
+    return render_template('about.html', name="")
+    
+@app.route('/profile', methods=['GET', 'POST'])
+def profile():
+    
+    file_folder = app.config["UPLOAD_FOLDER"]
+    #Validation not saving data to database.
+    user_form = UserForm()
+    
+    
+    if request.method =='POST': #and user_form.validate_on_submit():
+        firstname = request.form['firstname']
+        lastname = request.form['lastname']
+        age = request.form['age']
+        gender = request.form['gender']
+        biography = request.form['biography']
+        file = request.files['file']
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(file_folder, filename))
+        
+        user = UserProfile(date=time.strftime("%c"), first_name=firstname, last_name=lastname, age=age, gender=gender, biography=biography, file=filename)
+        db.session.add(user)
+        db.session.commit()
+        flash('Profile has been created!')
+        return render_template('home.html')
+    
+    else:
+        return render_template('profile.html')
+        
+@app.route('/profiles', methods=['GET', 'POST'])
+def profiles():
+    users = UserProfile.query.all()
+    return render_template('profiles.html', users=users)
+    
+@app.route('/profile/<int:id>')
+def userProfile(id):
+    users = UserProfile.query.filter_by(id=id).first()
+    return render_template('userProfile.html', users=users)
 
 ###
 # The functions below should be applicable to all Flask apps.

@@ -1,3 +1,14 @@
 body {
     padding-top: 50px;
 }
+
+img{
+    float: left;
+    width: 400px;
+    height: 400px;
+    padding: 50px;
+}
+
+body div #info{
+    border: 1px solid black;
+}

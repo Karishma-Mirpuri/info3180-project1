@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block main %}
+
+<h1>Profiles</h1>
+
+{% for user in users %}
+<div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+        <div id = 'info'>
+            <!--Image throwing error-->
+            <img src="{{ url_for('static', filename='uploads/' + user.file) }}">
+            <h3>{{ user.first_name}} {{ user.last_name }}</h3>
+            <p><b>Profie created on:</b> {{ user.date }}</p> <br>
+            <p><b>User ID:</b> {{ user.id }}</p>
+            <p><b>Gender:</b> {{ user.gender }}</p>
+            <p><b>Age:</b> {{ user.age }}</p>
+            <p>{{ user.biography }}</p>
+         </div>
+    </div>
+    <div class="col-md-3"></div>
+</div>
+{% endfor %}
+
+
+{% endblock %}
