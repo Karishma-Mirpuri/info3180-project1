@@ -52,19 +52,28 @@ def profile():
         db.session.commit()
         flash('Profile has been created!')
         return render_template('home.html')
-    
+
     else:
         return render_template('profile.html')
         
 @app.route('/profiles', methods=['GET', 'POST'])
 def profiles():
     users = UserProfile.query.all()
-    return render_template('profiles.html', users=users)
+    if request.method =='POST' and request.headers['Content-Type'] == "application/json":
+        list = [] 
+        for user in users:
+            list.append({'userid':user.id})
+        return jsonify(users=list)
+    else:
+        return render_template('profiles.html', users=users)
     
 @app.route('/profile/<int:id>')
 def userProfile(id):
     users = UserProfile.query.filter_by(id=id).first()
-    return render_template('userProfile.html', users=users)
+    if request.method =='POST' and request.headers['Content-Type'] == "application/json":
+        return jsonify(id=users.id, date=users.date, age=users.age, gender=users.gender, biography=users.biography, file=users.filename)
+    else:
+        return render_template('userProfile.html', users=users)
 
 ###
 # The functions below should be applicable to all Flask apps.
